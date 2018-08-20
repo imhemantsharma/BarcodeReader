@@ -105,33 +105,10 @@ public class CameraSourcePreview extends ViewGroup {
         }
     }
 
-    private class SurfaceCallback implements SurfaceHolder.Callback {
-        @Override
-        public void surfaceCreated(SurfaceHolder surface) {
-            mSurfaceAvailable = true;
-            try {
-                startIfReady();
-            } catch (SecurityException se) {
-                Log.e(TAG,"Do not have permission to start the camera", se);
-            } catch (IOException e) {
-                Log.e(TAG, "Could not start camera source.", e);
-            }
-        }
-
-        @Override
-        public void surfaceDestroyed(SurfaceHolder surface) {
-            mSurfaceAvailable = false;
-        }
-
-        @Override
-        public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        }
-    }
-
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        int width = getWidth();//320;
-        int height = getHeight();//240;
+        int width = getWidth();
+        int height = getHeight();
         if (mCameraSource != null) {
             Size size = mCameraSource.getPreviewSize();
             if (size != null) {
@@ -140,26 +117,6 @@ public class CameraSourcePreview extends ViewGroup {
             }
         }
 
-      /*  // Swap width and height sizes when in portrait, since it will be rotated 90 degrees
-        if (isPortraitMode()) {
-            int tmp = width;
-            //noinspection SuspiciousNameCombination
-            width = height;
-            height = tmp;
-        }
-
-        final int layoutWidth = right - left;
-        final int layoutHeight = bottom - top;
-
-        // Computes height and width for potentially doing fit width.
-        int childWidth = layoutWidth;
-        int childHeight = (int)(((float) layoutWidth / (float) width) * height);
-
-        // If height is too tall using fit width, does fit height instead.
-        if (isPortraitMode()) {  //childHeight > layoutHeight
-            childHeight = layoutHeight;
-            childWidth = (int)(((float) layoutHeight / (float) height) * width);
-        }*/
         for (int i = 0; i < getChildCount(); ++i) {
             getChildAt(i).layout(0, 0, width, height);
         }
@@ -183,5 +140,28 @@ public class CameraSourcePreview extends ViewGroup {
 
         Log.d(TAG, "isPortraitMode returning false by default");
         return false;
+    }
+
+    private class SurfaceCallback implements SurfaceHolder.Callback {
+        @Override
+        public void surfaceCreated(SurfaceHolder surface) {
+            mSurfaceAvailable = true;
+            try {
+                startIfReady();
+            } catch (SecurityException se) {
+                Log.e(TAG, "Do not have permission to start the camera", se);
+            } catch (IOException e) {
+                Log.e(TAG, "Could not start camera source.", e);
+            }
+        }
+
+        @Override
+        public void surfaceDestroyed(SurfaceHolder surface) {
+            mSurfaceAvailable = false;
+        }
+
+        @Override
+        public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+        }
     }
 }

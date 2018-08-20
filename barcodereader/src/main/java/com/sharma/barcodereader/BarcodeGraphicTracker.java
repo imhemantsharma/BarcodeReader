@@ -15,7 +15,6 @@
  */
 package com.sharma.barcodereader;
 
-import android.content.Context;
 import android.support.annotation.UiThread;
 import android.util.Log;
 import android.util.SparseArray;
@@ -37,24 +36,11 @@ public class BarcodeGraphicTracker extends Tracker<Barcode> {
 
     private BarcodeCaptureListener barcodeCaptureListener;
 
-    /**
-     * Consume the item instance detected from an Activity or Fragment level by implementing the
-     * BarcodeCaptureListener interface method onBarcodeDetected.
-     */
-    public interface BarcodeCaptureListener {
-        @UiThread
-        void onBarcodeDetected(Barcode barcode);
-    }
-
     BarcodeGraphicTracker(GraphicOverlay<BarcodeGraphic> mOverlay, BarcodeGraphic mGraphic,
-                          Context context) {
+                          BarcodeCaptureListener barcodeCaptureListener) {
         this.mOverlay = mOverlay;
         this.mGraphic = mGraphic;
-        if (context instanceof BarcodeCaptureListener) {
-            this.barcodeCaptureListener = (BarcodeCaptureListener) context;
-        } else {
-            throw new RuntimeException("Hosting activity must implement BarcodeCaptureListener");
-        }
+        this.barcodeCaptureListener = barcodeCaptureListener;
     }
 
     /**
@@ -86,7 +72,6 @@ public class BarcodeGraphicTracker extends Tracker<Barcode> {
         }
     }
 
-
     /**
      * Hide the graphic when the corresponding object was not detected.  This can happen for
      * intermediate frames temporarily, for example if the object was momentarily blocked from
@@ -104,5 +89,14 @@ public class BarcodeGraphicTracker extends Tracker<Barcode> {
     @Override
     public void onDone() {
         mOverlay.remove(mGraphic);
+    }
+
+    /**
+     * Consume the item instance detected from an Activity or Fragment level by implementing the
+     * BarcodeCaptureListener interface method onBarcodeDetected.
+     */
+    protected interface BarcodeCaptureListener {
+        @UiThread
+        void onBarcodeDetected(Barcode barcode);
     }
 }

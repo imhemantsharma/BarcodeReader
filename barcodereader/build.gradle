@@ -1,8 +1,115 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
 
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
+    }
+}
+
+ext {
+    bintrayRepo = 'Barcode-Reader'
+    bintrayName = 'Barcode'
+
+    publishedGroupId = 'com.sharma'
+    libraryName = 'Barcode'
+    artifact = 'Barcode'
+
+    libraryDescription = 'This library used to read barcode using google vision support.'
+
+    siteUrl = 'https://github.com/imhemantsharma/BarcodeReader'
+    gitUrl = 'https://github.com/imhemantsharma/BarcodeReader.git'
+
+    libraryVersion = '1.0.0'
+
+    developerId = 'imhemantsharma'
+    developerName = 'Hemant Sharma'
+    developerEmail = 'imhsharma1@gmail.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
+
+group = publishedGroupId
+version = libraryVersion
+
+install {
+    repositories.mavenInstaller {
+        pom.project {
+            packaging 'aar'
+            groupId publishedGroupId
+            artifactId artifact
+
+            name libraryName
+            description libraryDescription
+            url siteUrl
+
+            licenses {
+                license {
+                    name licenseName
+                    url licenseUrl
+                }
+            }
+            developers {
+                developer {
+                    id developerId
+                    name developerName
+                    email developerEmail
+                }
+            }
+            scm {
+                connection gitUrl
+                developerConnection gitUrl
+                url siteUrl
+            }
+        }
+    }
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.srcDirs
+}
+
+
+artifacts {
+    archives sourcesJar
+}
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+bintray {
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
+
+    configurations = ['archives']
+    pkg {
+        repo = bintrayRepo
+        name = bintrayName
+        desc = libraryDescription
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        licenses = allLicenses
+        dryRun = false
+        publish = true
+        override = false
+        publicDownloadNumbers = true
+        version {
+            desc = libraryDescription
+        }
+    }
+}
 
 android {
     compileSdkVersion 27
+    buildToolsVersion '27.0.3'
 
     defaultConfig {
         minSdkVersion 14
@@ -26,9 +133,11 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
+    //noinspection GradleCompatible
     implementation 'com.android.support:appcompat-v7:27.1.1'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'com.google.android.gms:play-services-vision:11.0.2'
 }
+

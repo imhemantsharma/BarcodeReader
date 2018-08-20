@@ -18,10 +18,8 @@ package com.sharma.barcodereader;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -54,7 +52,6 @@ import com.sharma.barcodereader.ui.camera.CameraSource;
 import com.sharma.barcodereader.ui.camera.CameraSourcePreview;
 import com.sharma.barcodereader.ui.camera.GraphicOverlay;
 
-
 import java.io.IOException;
 
 /**
@@ -63,22 +60,17 @@ import java.io.IOException;
  * size, and ID of each barcode.
  */
 public final class BarcodeCapture extends Fragment implements View.OnTouchListener, BarcodeGraphicTracker.BarcodeCaptureListener {
+    // constants used to pass extra data in the intent
+    public static final String BarcodeObject = "Barcode";
     private static final String TAG = "Barcode-reader";
-
-    private Activity activity;
-
     // intent request code to handle updating play services if needed.
     private static final int RC_HANDLE_GMS = 9001;
 
     // permission request codes need to be < 256
     private static final int RC_HANDLE_CAMERA_PERM = 2;
-
-    // constants used to pass extra data in the intent
-    public static final String BarcodeObject = "Barcode";
-
-    private Boolean autoFocus = false, useFlash = false;
-
+    private Activity activity;
     private BarcodeCaptureListener listener;
+    private Boolean autoFocus = false, useFlash = false;
 
     private CameraSource mCameraSource;
     private CameraSourcePreview mPreview;
@@ -142,8 +134,8 @@ public final class BarcodeCapture extends Fragment implements View.OnTouchListen
         }
     }
 
-    public void setBarcodeListener(BarcodeCaptureListener barcodeReaderListener) {
-        listener = barcodeReaderListener;
+    public void setBarcodeListener(BarcodeCaptureListener barcodeCaptureListener) {
+        listener = barcodeCaptureListener;
     }
 
     /**
@@ -180,7 +172,7 @@ public final class BarcodeCapture extends Fragment implements View.OnTouchListen
         // graphics for each barcode on screen.  The factory is used by the multi-processor to
         // create a separate tracker instance for each barcode.
         BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(activity).build();
-        BarcodeTrackerFactory barcodeFactory = new BarcodeTrackerFactory(mGraphicOverlay, activity);
+        BarcodeTrackerFactory barcodeFactory = new BarcodeTrackerFactory(mGraphicOverlay, this);
         barcodeDetector.setProcessor(
                 new MultiProcessor.Builder<>(barcodeFactory).build());
 
@@ -377,6 +369,21 @@ public final class BarcodeCapture extends Fragment implements View.OnTouchListen
         return false;
     }
 
+    @Override
+    public void onBarcodeDetected(Barcode barcode) {
+        //do something with barcode data returned
+        if (listener != null) listener.onBarcodeDetected(barcode);
+    }
+
+    /**
+     * Consume the item instance detected from an Activity or Fragment level by implementing the
+     * BarcodeCaptureListener interface method onBarcodeDetected.
+     */
+    public interface BarcodeCaptureListener {
+        @UiThread
+        void onBarcodeDetected(Barcode barcode);
+    }
+
     private class CaptureGestureListener extends GestureDetector.SimpleOnGestureListener {
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
@@ -436,17 +443,6 @@ public final class BarcodeCapture extends Fragment implements View.OnTouchListen
         public void onScaleEnd(ScaleGestureDetector detector) {
             mCameraSource.doZoom(detector.getScaleFactor());
         }
-    }
-
-    @Override
-    public void onBarcodeDetected(Barcode barcode) {
-        //do something with barcode data returned
-        if (listener!=null)listener.onBarcodeDetected(barcode);
-    }
-
-    public interface BarcodeCaptureListener {
-        @UiThread
-        void onBarcodeDetected(Barcode barcode);
     }
 
 }
