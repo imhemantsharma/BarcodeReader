@@ -25,7 +25,7 @@ ext {
     siteUrl = 'https://github.com/imhemantsharma/BarcodeReader'
     gitUrl = 'https://github.com/imhemantsharma/BarcodeReader.git'
 
-    libraryVersion = '1.0.0'
+    libraryVersion = '1.0.1'
 
     developerId = 'imhemantsharma'
     developerName = 'Hemant Sharma'
