@@ -12,7 +12,7 @@ Implementation Guide :
 ```gradle
 dependencies {
     // barcode reader
-    implementation 'com.sharma:Barcode:1.0.0'
+    implementation 'com.sharma:Barcode:1.0.1'
 }
 ```
 Implementation Guide in Activity :
