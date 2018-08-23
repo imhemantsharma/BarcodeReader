@@ -2,6 +2,8 @@
 
 BarcodeReader library used Google Mobile Vision, By adding some extra functionality in "Google Mobile Vision" sample barcode reader library is created.
 
+[ ![Download](https://api.bintray.com/packages/imhemantsharma/Barcode-Reader/Barcode/images/download.svg) ](https://bintray.com/imhemantsharma/Barcode-Reader/Barcode/_latestVersion)
+
 ![portrait](https://user-images.githubusercontent.com/37363651/44333590-d32b3100-a48c-11e8-9e1a-4ca0e11aa587.png)  ![landscape](https://user-images.githubusercontent.com/37363651/44333508-9c551b00-a48c-11e8-9e9f-67f704217104.png)
 
 
